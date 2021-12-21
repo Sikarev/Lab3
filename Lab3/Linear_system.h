@@ -9,9 +9,10 @@ class LinearSystem {
 public:
 	LinearSystem(int SIZE = 3) : size(size) {
 		// Создаём вектор со случайными значениями
-		Matrix<double> Lambda(SIZE);
+		Matrix<> Lambda(SIZE);
 		for (int i = 0; i < SIZE; i++) {
 			Lambda(i, i) = double(i + 1);
+			l.push_back(i + 1);
 		}
 
 		// Создаём случайный вектор omega и нормируем его
@@ -26,7 +27,7 @@ public:
 		}
 
 		// Посроение матрицы Хаусхолдера
-		Matrix<double> H(SIZE);
+		H = Matrix<double>(SIZE);
 		for (int row = 0; row < H.RowsCount(); row++) {
 			for (int col = 0; col < H.ColsCount(); col++) {
 				H(row, col) = double(1 - 2 * omega[row] * omega[col]);
@@ -36,7 +37,9 @@ public:
 		A = H * Lambda * H.transpose();
 	}
 private:
-	Matrix<> A;
+	Matrix<> A;					// Матрица системы
+	Matrix<> H;					// Матрица собственных векторов системы Ax
+	vector<double> l;			// Собственные значения матрицы A
 	int size;
 	void printMatrix(Matrix<> matr);
 };
