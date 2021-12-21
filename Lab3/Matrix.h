@@ -23,6 +23,8 @@ public:
 	~Matrix();										// Деструктор
 
 	Matrix transpose();
+	Matrix column(int number);
+	Matrix row(int number);
 	bool SameSizeWith(const Matrix&);
 	int RowsCount();
 	int ColsCount();
@@ -33,6 +35,7 @@ public:
 	Matrix  operator + (const Matrix&);		// Сложение матриц
 	Matrix  operator - (const Matrix&);		// Вычитание матриц
 	Matrix  operator * (const Matrix&);		// Умножение матриц
+	Matrix  operator * (const double);
 
 	friend istream& operator >> <> (istream&, Matrix&);			// Перегрузка оператора >> для ввода матрицы
 	friend ostream& operator << <> (ostream&, const Matrix&);	// Перегрузка оператора << для вывода матрицы
@@ -90,6 +93,20 @@ Matrix<Cell> Matrix<Cell>::transpose() {
 		for (int j = 0; j < res.cols; j++) {
 			res.cells[i][j] = cells[j][i];
 		}
+	}
+	return res;
+}
+
+template <typename Cell>
+Matrix<Cell> Matrix<Cell>::row(int number) {
+	return Matrix<>(1, cols, cells[number]);
+}
+
+template <typename Cell>
+Matrix<Cell> Matrix<Cell>::column(int number) {
+	Matrix<> res(rows, 1);
+	for (int i = 0; i < rows; i++) {
+		res.cells[i][0] = cells[i][number];
 	}
 	return res;
 }
@@ -162,6 +179,18 @@ Matrix<Cell> Matrix<Cell>::operator*(const Matrix& M)
 				}
 				res.cells[i][j] = sum;
 			}
+		}
+	}
+	return res;
+}
+
+template <typename Cell>
+Matrix<Cell> Matrix<Cell>::operator*(const double scalar)
+{
+	Matrix<Cell> res(rows, cols);
+	for (int i = 0; i < res.rows; i++) {
+		for (int j = 0; j < res.cols; j++) {
+			res.cells[i][j] = cells[i][j] * scalar;
 		}
 	}
 	return res;
