@@ -25,9 +25,10 @@ public:
 	Matrix transpose();
 	Matrix column(int number);
 	Matrix row(int number);
-	bool SameSizeWith(const Matrix&);
-	int RowsCount();
-	int ColsCount();
+	bool sameSizeWith(const Matrix&);
+	int rowsCount();
+	int colsCount();
+	void print();
 
 	Cell &operator()(int i, int j) { return cells[i][j]; }
 
@@ -112,24 +113,35 @@ Matrix<Cell> Matrix<Cell>::column(int number) {
 }
 
 template <typename Cell>
-bool Matrix<Cell>::SameSizeWith(const Matrix& M) {
+bool Matrix<Cell>::sameSizeWith(const Matrix& M) {
 	return rows == M.rows && cols == M.cols;
 }
 
 template <typename Cell>
-int Matrix<Cell>::RowsCount() {
+int Matrix<Cell>::rowsCount() {
 	return rows;
 }
 
 template <typename Cell>
-int Matrix<Cell>:: ColsCount() {
+int Matrix<Cell>:: colsCount() {
 	return cols;
+}
+
+template <typename Cell>
+void Matrix<Cell>:: print() {
+	for (int i = 0; i < rowsCount(); i++) {
+		for (int j = 0; j < colsCount(); j++) {
+			cout << cells[i][j] << '\t';
+		}
+		cout << endl;
+	}
+	cout << "------------------" << endl;
 }
 
 template <typename Cell>
 Matrix<Cell>& Matrix<Cell>::operator=(const Matrix& M)
 {
-	if ( !SameSizeWith(M) )
+	if ( !sameSizeWith(M) )
 	{
 		FreeCells();
 		AllocateCells(M.rows, M.cols);
@@ -144,7 +156,7 @@ template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator+(const Matrix& M)
 {
 	Matrix<Cell> res(*this);
-	if ( SameSizeWith(M) )
+	if ( sameSizeWith(M) )
 	{
 		for (int i=0; i<rows; i++)
 		for (int j=0; j<cols; j++)
@@ -157,7 +169,7 @@ template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator-(const Matrix& M)
 {
 	Matrix<Cell> res(*this);
-	if (SameSizeWith(M))
+	if (sameSizeWith(M))
 	{
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -230,7 +242,6 @@ ostream& operator << (ostream& fo, const Matrix<Cell>& M)
 {
 	for (int i=0; i<M.rows; i++)
 	{
-		fo << "  ";
 		for (int j=0; j<M.cols; j++)
 			fo << M.cells[i][j] << " \t";
 		fo << endl;

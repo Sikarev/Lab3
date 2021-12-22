@@ -20,36 +20,26 @@ public:
 		double omegaLen = 0;
 		for (int i = 0; i < SIZE; i++) {
 			omega.push_back(double(rand() % 10) + 1);
-			omegaLen += omega[i];
+			omegaLen += omega[i] * omega[i];
 		}
+		omegaLen = sqrt(omegaLen);
 		for (int i = 0; i < omega.size(); i++) {
 			omega[i] /= omegaLen;
 		}
 
 		// Посроение матрицы Хаусхолдера
 		H = Matrix<double>(SIZE);
-		for (int row = 0; row < H.RowsCount(); row++) {
-			for (int col = 0; col < H.ColsCount(); col++) {
+		for (int row = 0; row < H.rowsCount(); row++) {
+			for (int col = 0; col < H.colsCount(); col++) {
 				H(row, col) = double(1 - 2 * omega[row] * omega[col]);
 			}
 		}
 
 		A = H * Lambda * H.transpose();
 	}
-private:
+
 	Matrix<> A;					// Матрица системы
 	Matrix<> H;					// Матрица собственных векторов системы Ax
 	vector<double> l;			// Собственные значения матрицы A
 	int size;
-	void printMatrix(Matrix<> matr);
 };
-
-void LinearSystem::printMatrix(Matrix<> matr) {
-	for (int i = 0; i < matr.RowsCount(); i++) {
-		for (int j = 0; j < matr.ColsCount(); j++) {
-			cout << matr(i, j) << '\t';
-		}
-		cout << endl;
-	}
-	cout << "------------------" << endl;
-}
