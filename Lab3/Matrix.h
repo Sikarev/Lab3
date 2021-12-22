@@ -12,12 +12,12 @@ class Matrix
 private:
 	int rows, cols;
 	Cell** cells;
-	void AllocateCells(int, int);
-	void FreeCells();
+	void allocate_cells(int, int);
+	void free_cells();
 public:
 	Matrix() : rows(0), cols(0), cells(nullptr) {}	// Конструктор по умолчанию
 	Matrix(const Matrix&);							// Конструктор копирования
-	Matrix(int);
+	explicit Matrix(int);
 	Matrix(int, int);								// Конструктор нулевой матрицы
 	Matrix(int, int, Cell*);						// Конструктор матрицы из списка
 	~Matrix();										// Деструктор
@@ -25,9 +25,9 @@ public:
 	Matrix transpose();
 	Matrix column(int number);
 	Matrix row(int number);
-	bool sameSizeWith(const Matrix&);
-	int rowsCount();
-	int colsCount();
+	bool same_size_with(const Matrix&);
+	int rows_count();
+	int cols_count();
 	void print();
 
 	Cell &operator()(int i, int j) { return cells[i][j]; }
@@ -46,7 +46,7 @@ public:
 template <typename Cell>
 Matrix<Cell>::Matrix(const Matrix<Cell>& M)
 {
-	AllocateCells(M.rows, M.cols);
+	allocate_cells(M.rows, M.cols);
 	for (int i=0; i<rows; i++)
 	for (int j=0; j<cols; j++)
 		cells[i][j] = M.cells[i][j];
@@ -55,7 +55,7 @@ Matrix<Cell>::Matrix(const Matrix<Cell>& M)
 template <typename Cell>
 Matrix<Cell>::Matrix(int Size)
 {
-	AllocateCells(Size, Size);
+	allocate_cells(Size, Size);
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < cols; j++)
 			cells[i][j] = 0;
@@ -64,7 +64,7 @@ Matrix<Cell>::Matrix(int Size)
 template <typename Cell>
 Matrix<Cell>::Matrix(int Rows, int Cols)
 {
-	AllocateCells(Rows, Cols);
+	allocate_cells(Rows, Cols);
 	for (int i=0; i<Rows; i++)
 		for (int j=0; j<Cols; j++)
 			cells[i][j] = 0;
@@ -73,7 +73,7 @@ Matrix<Cell>::Matrix(int Rows, int Cols)
 template <typename Cell>
 Matrix<Cell>::Matrix(int Rows, int Cols, Cell* list)
 {
-	AllocateCells(Rows, Cols);
+	allocate_cells(Rows, Cols);
 	for (int i = 0; i < Rows; i++) {
 		for (int j = 0; j < Cols; j++) {
 			cells[i][j] = list[ i * cols + j];
@@ -84,7 +84,7 @@ Matrix<Cell>::Matrix(int Rows, int Cols, Cell* list)
 template <typename Cell>
 Matrix<Cell>::~Matrix()
 {
-	FreeCells();
+	free_cells();
 }
 
 template <typename Cell>
@@ -113,24 +113,24 @@ Matrix<Cell> Matrix<Cell>::column(int number) {
 }
 
 template <typename Cell>
-bool Matrix<Cell>::sameSizeWith(const Matrix& M) {
+bool Matrix<Cell>::same_size_with(const Matrix& M) {
 	return rows == M.rows && cols == M.cols;
 }
 
 template <typename Cell>
-int Matrix<Cell>::rowsCount() {
+int Matrix<Cell>::rows_count() {
 	return rows;
 }
 
 template <typename Cell>
-int Matrix<Cell>:: colsCount() {
+int Matrix<Cell>:: cols_count() {
 	return cols;
 }
 
 template <typename Cell>
 void Matrix<Cell>:: print() {
-	for (int i = 0; i < rowsCount(); i++) {
-		for (int j = 0; j < colsCount(); j++) {
+	for (int i = 0; i < rows_count(); i++) {
+		for (int j = 0; j < cols_count(); j++) {
 			cout << cells[i][j] << '\t';
 		}
 		cout << endl;
@@ -141,10 +141,10 @@ void Matrix<Cell>:: print() {
 template <typename Cell>
 Matrix<Cell>& Matrix<Cell>::operator=(const Matrix& M)
 {
-	if ( !sameSizeWith(M) )
+	if ( !same_size_with(M) )
 	{
-		FreeCells();
-		AllocateCells(M.rows, M.cols);
+		free_cells();
+		allocate_cells(M.rows, M.cols);
 	}
 	for (int i=0; i<rows; i++)
 	for (int j=0; j<cols; j++)
@@ -156,7 +156,7 @@ template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator+(const Matrix& M)
 {
 	Matrix<Cell> res(*this);
-	if ( sameSizeWith(M) )
+	if ( same_size_with(M) )
 	{
 		for (int i=0; i<rows; i++)
 		for (int j=0; j<cols; j++)
@@ -169,7 +169,7 @@ template <typename Cell>
 Matrix<Cell> Matrix<Cell>::operator-(const Matrix& M)
 {
 	Matrix<Cell> res(*this);
-	if (sameSizeWith(M))
+	if (same_size_with(M))
 	{
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -209,7 +209,7 @@ Matrix<Cell> Matrix<Cell>::operator*(const double scalar)
 }
 
 template <typename Cell>
-void Matrix<Cell>::AllocateCells(int Rows, int Cols)
+void Matrix<Cell>::allocate_cells(int Rows, int Cols)
 {
 	cells = new Cell*[Rows];
 	for (int i=0; i<Rows; i++)
@@ -219,7 +219,7 @@ void Matrix<Cell>::AllocateCells(int Rows, int Cols)
 }
 
 template <typename Cell>
-void Matrix<Cell>::FreeCells()
+void Matrix<Cell>::free_cells()
 {
 	for (int i=0; i<rows; i++)
 		delete cells[i];

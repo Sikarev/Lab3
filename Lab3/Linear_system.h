@@ -5,41 +5,42 @@
 
 using namespace std;
 
-class LinearSystem {
+class linear_system {
 public:
-	LinearSystem(int SIZE = 3) : size(size) {
+	explicit linear_system(const int size = 3) : size(size) {
 		// Создаём вектор со случайными значениями
-		Matrix<> Lambda(SIZE);
-		for (int i = 0; i < SIZE; i++) {
-			Lambda(i, i) = double(i + 1);
+		Matrix<> lambda(size);
+		for (int i = 0; i < size; i++) {
+			lambda(i, i) = static_cast<double>(i) + 1.0;
 			l.push_back(i + 1);
 		}
 
 		// Создаём случайный вектор omega и нормируем его
 		vector<double> omega;
-		double omegaLen = 0;
-		for (int i = 0; i < SIZE; i++) {
-			omega.push_back(double(rand() % 10) + 1);
-			omegaLen += omega[i] * omega[i];
+		double omega_len = 0;
+		for (int i = 0; i < size; i++) {
+			omega.push_back(static_cast<double>(rand() % 10) + 1);
+			omega_len += omega[i] * omega[i];
 		}
-		omegaLen = sqrt(omegaLen);
-		for (int i = 0; i < omega.size(); i++) {
-			omega[i] /= omegaLen;
+		omega_len = sqrt(omega_len);
+		for (double& i : omega)
+		{
+			i /= omega_len;
 		}
 
 		// Посроение матрицы Хаусхолдера
-		H = Matrix<double>(SIZE);
-		for (int row = 0; row < H.rowsCount(); row++) {
-			for (int col = 0; col < H.colsCount(); col++) {
-				H(row, col) = double(1 - 2 * omega[row] * omega[col]);
+		h = Matrix<double>(size);
+		for (int row = 0; row < h.rows_count(); row++) {
+			for (int col = 0; col < h.cols_count(); col++) {
+				h(row, col) = 1 - 2 * omega[row] * omega[col];
 			}
 		}
 
-		A = H * Lambda * H.transpose();
+		a = h * lambda * h.transpose();
 	}
 
-	Matrix<> A;					// Матрица системы
-	Matrix<> H;					// Матрица собственных векторов системы Ax
+	Matrix<> a;					// Матрица системы
+	Matrix<> h;					// Матрица собственных векторов системы Ax
 	vector<double> l;			// Собственные значения матрицы A
 	int size;
 };
