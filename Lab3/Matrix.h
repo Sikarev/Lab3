@@ -11,7 +11,6 @@ class Matrix
 {
 private:
 	int rows, cols;
-	Cell** cells;
 	void AllocateCells(int, int);
 	void FreeCells();
 public:
@@ -22,6 +21,8 @@ public:
 	Matrix(int, int, Cell*);						// Конструктор матрицы из списка
 	~Matrix();										// Деструктор
 
+	Cell** cells;
+
 	Matrix transpose();
 	Matrix column(int number);
 	Matrix row(int number);
@@ -30,7 +31,7 @@ public:
 	int colsCount();
 	void print();
 
-	Cell &operator()(int i, int j) { return cells[i][j]; }
+	Cell& operator()(int i, int j) { return cells[i][j]; }
 
 	Matrix& operator = (const Matrix&);		// Перегрузка оператора присваивания
 	Matrix  operator + (const Matrix&);		// Сложение матриц

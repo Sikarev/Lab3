@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <vector>
 #include <fstream>
 #include <string>
@@ -22,55 +22,77 @@ bool Khaletsky(Matrix<> A, Matrix<>& B, Matrix<>& C)
 				sum += B(j, k) * C(k, i);
 			}
 			if (B(j, j) == 0) {
-				// Метод Халецкого здесь неприменим
+				// Р Р°Р·Р»РѕР¶РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 				return false;
 			}
 			C(j, i) = (A(j, i) - sum) / B(j, j);
 		}
 	}
-	// Решено успешно
+	// Р РµС€РµРЅРѕ СѓСЃРїРµС€РЅРѕ
 	return true;
 }
-void normalize(vector<double>& vec) {
-	// Длина вектора
-	double len = 0;
-	for (int i = 0; i < vec.size(); i++) {
-		len += vec[i] * vec[i];
+double vectorLength(Matrix<> v)
+{
+	const int SIZE = v.colsCount();
+	double result = 0;
+
+	for (int i = 0; i < SIZE; i++){
+		result += v(0, i) * v(0, i);
 	}
-	len = sqrt(len);
-	// Нормируем вектор
-	for (int i = 0; i < vec.size(); i++) {
-		vec[i] /= len;
+	return sqrt(result);
+
+}
+void normalize(Matrix<>& v) {
+	const int SIZE = v.colsCount();
+	double len = vectorLength(v);
+	// РќРѕСЂРјР°Р»РёР·СѓРµРј РІРµРєС‚РѕСЂ
+	for (int i = 0; i < SIZE; i++) {
+		v(0, i) /= len;
 	}
 };
-void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<double> omega, double& e_l, Matrix<>& l_v, int& index) {
+double cosBetweenVectors(Matrix<> v1, Matrix<> v2)
+{
+	if (!v1.sameSizeWith(v2))
+		return 99;
+
+	double result = 0;
+	const int SIZE = v1.colsCount();
+
+	for (size_t i = 0; i < SIZE; i++)
+		result += v1(0, i) * v2(0, i);
+
+	return
+		result / (vectorLength(v1) * vectorLength(v2));
+
+}
+void buildTestMatrix(Matrix<>& A, Matrix<>& H, Matrix<>& lambda, Matrix<>& omega, double& e_l, Matrix<>& l_v, int index) {
 	const int SIZE = A.rowsCount();
 	
-	// Матрица с собственными занчениями A на диагонали
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ A пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Matrix<> Lambda(SIZE);
 	for (int i = 0; i < SIZE; i++) {
-		Lambda(i, i) = lambda[i];
+		Lambda(i, i) = lambda(0, i);
 	}
 
-	// Нормируем вектор 
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 
 	normalize(omega);
 
-	// Посроение матрицы Хаусхолдера
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	H = Matrix<double>(SIZE);
 	for (int row = 0; row < H.rowsCount(); row++) {
 		for (int col = 0; col < H.colsCount(); col++) {
-			H(row, col) = double(1 - 2 * omega[col] * omega[row]);
+			H(row, col) = double(1 - 2 * omega(0, col) * omega(0, row));
 		}
 	}
 
-	// Построение тестировочной матрицы
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	A = H * Lambda * H.transpose();
 
-	// Поиск минимального по модулю собств. значения и соотв. ему вектора
-	e_l = lambda[index];
-	for (int i = 1; i < lambda.size(); i++) {
-		if (abs(e_l) > abs(lambda[i])) {
-			e_l = lambda[i];
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	e_l = lambda(0, index);
+	for (int i = 0; i < SIZE; i++) {
+		if (abs(e_l) > abs(lambda(0, i))) {
+			e_l = lambda(0, i);
 			index = i;
 		}
 	}
@@ -95,15 +117,93 @@ void writeToFile(Matrix<>& A, double e_l, double e_v, double iterations, string 
 		out << iterations;
 	}
 }
-void method(Matrix<>& A, double l_1, Matrix<>& x_1, int M) {
+bool findY(Matrix<> B, Matrix<> f, Matrix<>& y) {
+	const int SIZE = B.colsCount();
+	for (int i = 0; i < SIZE; i++) {
+		double sum = f(0, i);
+		for (int j = 0; j <= i - 1; j++) {
+			sum -= B(i, j) * y(0, j);
+		}
+		if (B(i, i) == 0) {
+			// РџРѕР»СѓС‡РёР»Рё 0 РЅР° РіР»Р°РІРЅРѕР№ РґРёР°РіРѕРЅР°Р»Рё, РІС‹С…РѕРґРёРј РёР· РјРµС‚РѕРґР°
+			return false;
+		}
+		y(0, i) = sum / B(i, i);
+	}
+	// Р’РµРєС‚РѕСЂ РїРѕР»РЅРѕСЃС‚СЊСЋ РѕР±СЂР°Р±РѕС‚Р°РЅ, РІРѕР·РІСЂР°С‚ true
+	return true;
+}
+void findX(Matrix<> C, Matrix<> y, Matrix<> x) {
+	const int SIZE = C.colsCount();
+	for (int i = SIZE - 1; i >= 0; i--) {
+		double sum = y(0, i);
+		for (int j = i + 1; j < SIZE; j++) {
+			sum -= C(i, j) * x(0, j);
+		}
+		x(0, i) = sum;
+	}
+}
+double vectProd(Matrix<>& v1, Matrix<>& v2) {
+	const int SIZE = v1.colsCount();
+	double res = 0;
+	for (int i = 0; i < SIZE; i++) {
+		res += v1(0, i) * v2(0, i);
+	}
+	return res;
+}
+void method(Matrix<>& A, Matrix<>& xn, int M, double eps_l, double eps_v, int& k_l, int& k_v, double lambda) {
 	const int SIZE = A.colsCount();
 
-	Matrix<> fu(1, SIZE);
-	Matrix<> fu_2(1, SIZE);
-	Matrix<> B(SIZE);			// нижнетреугольная матрица LU-разложения
-	Matrix<> C(SIZE);			// верхнетреугольная матрица LU-разложения
-	Matrix<> E(SIZE, SIZE, 1);	// единичная матрица
-	Matrix<> e(1, SIZE, 1);		// единичный вектор
+	Matrix<> f_1(1, SIZE);
+	Matrix<> f_2(1, SIZE);
+	Matrix<> B(SIZE);			// РќРёР¶РЅРµС‚СЂРµСѓРіРѕР»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° LU-СЂР°Р·Р»РѕР¶РµРЅРёСЏ
+	Matrix<> C(SIZE);			// Р’РµСЂС…РЅРµС‚СЂРµСѓРіРѕР»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° LU-СЂР°Р·Р»РѕР¶РµРЅРёСЏ
+	Matrix<> E(SIZE, SIZE, 1);	// Р•РґРёРЅРёС‡РЅР°СЏ РјР°С‚СЂРёС†Р°
+	Matrix<> e(1, SIZE, 1);		// Р•РґРёРЅРёС‡РЅС‹Р№ РІРµРєС‚РѕСЂ
 
-	bool keepWorking = Khaletsky(A, B, C);
+	bool continueToWork = Khaletsky(A, B, C);
+	int count = 0;
+	double a1 = 1, a2;
+
+	while (continueToWork) {
+		Matrix<> y(1, SIZE), x(1, SIZE);
+		if (findY(B, f_1, y)) {
+			findX(C, y, x);
+		}
+
+		if (count >= 2) {
+			a2 = a1;
+		}
+		a1 = vectProd(f_1, x);
+
+		if (count >= 2) {
+			f_2 = f_1;
+		}
+		f_1 = x;
+		normalize(f_1);
+
+		count++;
+		if (count >= 3) {
+			if (abs(a1 - a2) < eps_l) {
+				k_l = count;
+			}
+
+			if (abs(cosBetweenVectors(f_1, f_2)) < eps_v) {
+				k_v = count;
+				if (k_l == -1) {
+					k_l = count;
+				}
+				continueToWork = false;
+			}
+		}
+
+		if (count >= M) {
+			continueToWork = false;
+		}
+	}
+
+	if (k_v != -1) {
+		lambda = 1 / a2;
+		xn = f_1;
+	}
 }
