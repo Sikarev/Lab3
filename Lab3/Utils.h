@@ -32,17 +32,40 @@ bool Khaletsky(Matrix<> A, Matrix<>& B, Matrix<>& C)
 	return true;
 }
 void normalize(vector<double>& vec) {
-	// Длина вектора
-	double len = 0;
-	for (int i = 0; i < vec.size(); i++) {
-		len += vec[i] * vec[i];
-	}
-	len = sqrt(len);
+	double len = sqrt(norm_of_vector(vec));
 	// Нормируем вектор
 	for (int i = 0; i < vec.size(); i++) {
 		vec[i] /= len;
 	}
 };
+inline double norm_of_vector(const vector<double>& lhs)
+{
+
+	double result = 0;
+
+	for (auto& vector_element : lhs)
+	{
+		result += vector_element * vector_element;
+	}
+
+	return sqrt(result);
+
+}
+inline double cos_phi_between_vectors(const vector<double>& lhs, const vector<double>& rhs)
+{
+	if (lhs.size() != rhs.size())
+		return -1;
+
+	double result = 0;
+	const size_t n = lhs.size();
+
+	for (size_t i = 0; i < n; i++)
+		result += lhs[i] * rhs[i];
+
+	return
+		result / (norm_of_vector(lhs) * norm_of_vector(rhs));
+
+}
 void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<double> omega, double& e_l, Matrix<>& l_v) {
 	const int SIZE = A.rowsCount();
 	
