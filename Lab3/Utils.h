@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <vector>
 #include <fstream>
 #include <string>
@@ -22,40 +22,63 @@ bool Khaletsky(Matrix<> A, Matrix<>& B, Matrix<>& C)
 				sum += B(j, k) * C(k, i);
 			}
 			if (B(j, j) == 0) {
-				// Метод Халецкого здесь неприменим
+				// Р Р°Р·Р»РѕР¶РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ
 				return false;
 			}
 			C(j, i) = (A(j, i) - sum) / B(j, j);
 		}
 	}
-	// Решено успешно
+	// Р РµС€РµРЅРѕ СѓСЃРїРµС€РЅРѕ
 	return true;
 }
 void normalize(vector<double>& vec) {
-	// Длина вектора
-	double len = 0;
-	for (int i = 0; i < vec.size(); i++) {
-		len += vec[i] * vec[i];
-	}
-	len = sqrt(len);
-	// Нормируем вектор
+	double len = sqrt(norm_of_vector(vec));
+	// РќРѕСЂРјР°Р»РёР·СѓРµРј РІРµРєС‚РѕСЂ
 	for (int i = 0; i < vec.size(); i++) {
 		vec[i] /= len;
 	}
 };
-void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<double> omega, double& e_l, Matrix<>& l_v, int& index) {
+inline double norm_of_vector(const vector<double>& lhs)
+{
+
+	double result = 0;
+
+	for (auto& vector_element : lhs)
+	{
+		result += vector_element * vector_element;
+	}
+
+	return sqrt(result);
+
+}
+inline double cos_phi_between_vectors(const vector<double>& lhs, const vector<double>& rhs)
+{
+	if (lhs.size() != rhs.size())
+		return -1;
+
+	double result = 0;
+	const size_t n = lhs.size();
+
+	for (size_t i = 0; i < n; i++)
+		result += lhs[i] * rhs[i];
+
+	return
+		result / (norm_of_vector(lhs) * norm_of_vector(rhs));
+
+}
+void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<double> omega, double& e_l, Matrix<>& l_v) {
 	const int SIZE = A.rowsCount();
 	
-	// Матрица с собственными занчениями A на диагонали
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ A пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	Matrix<> Lambda(SIZE);
 	for (int i = 0; i < SIZE; i++) {
 		Lambda(i, i) = lambda[i];
 	}
 
-	// Нормируем вектор 
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 
 	normalize(omega);
 
-	// Посроение матрицы Хаусхолдера
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	H = Matrix<double>(SIZE);
 	for (int row = 0; row < H.rowsCount(); row++) {
 		for (int col = 0; col < H.colsCount(); col++) {
@@ -63,10 +86,10 @@ void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<dou
 		}
 	}
 
-	// Построение тестировочной матрицы
+	// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	A = H * Lambda * H.transpose();
 
-	// Поиск минимального по модулю собств. значения и соотв. ему вектора
+	// пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	e_l = lambda[index];
 	for (int i = 1; i < lambda.size(); i++) {
 		if (abs(e_l) > abs(lambda[i])) {
@@ -100,10 +123,10 @@ void method(Matrix<>& A, double l_1, Matrix<>& x_1, int M) {
 
 	Matrix<> fu(1, SIZE);
 	Matrix<> fu_2(1, SIZE);
-	Matrix<> B(SIZE);			// нижнетреугольная матрица LU-разложения
-	Matrix<> C(SIZE);			// верхнетреугольная матрица LU-разложения
-	Matrix<> E(SIZE, SIZE, 1);	// единичная матрица
-	Matrix<> e(1, SIZE, 1);		// единичный вектор
+	Matrix<> B(SIZE);			// РќРёР¶РЅРµС‚СЂРµСѓРіРѕР»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° LU-СЂР°Р·Р»РѕР¶РµРЅРёСЏ
+	Matrix<> C(SIZE);			// Р’РµСЂС…РЅРµС‚СЂРµСѓРіРѕР»СЊРЅР°СЏ РјР°С‚СЂРёС†Р° LU-СЂР°Р·Р»РѕР¶РµРЅРёСЏ
+	Matrix<> E(SIZE, SIZE, 1);	// Р•РґРёРЅРёС‡РЅР°СЏ РјР°С‚СЂРёС†Р°
+	Matrix<> e(1, SIZE, 1);		// Р•РґРёРЅРёС‡РЅС‹Р№ РІРµРєС‚РѕСЂ
 
 	bool keepWorking = Khaletsky(A, B, C);
 }
