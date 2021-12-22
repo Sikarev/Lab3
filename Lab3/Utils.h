@@ -33,7 +33,7 @@ bool Khaletsky(Matrix<> A, Matrix<>& B, Matrix<>& C)
 }
 void normalize(vector<double>& vec) {
 	double len = sqrt(norm_of_vector(vec));
-	// Нормализуем вектор
+	// Нормируем вектор
 	for (int i = 0; i < vec.size(); i++) {
 		vec[i] /= len;
 	}
