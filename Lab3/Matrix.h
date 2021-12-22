@@ -18,7 +18,7 @@ public:
 	Matrix() : rows(0), cols(0), cells(nullptr) {}	// Конструктор по умолчанию
 	Matrix(const Matrix&);							// Конструктор копирования
 	Matrix(int);
-	Matrix(int, int);								// Конструктор нулевой матрицы
+	Matrix(int, int, int = 0);								// Конструктор нулевой матрицы
 	Matrix(int, int, Cell*);						// Конструктор матрицы из списка
 	~Matrix();										// Деструктор
 
@@ -62,12 +62,12 @@ Matrix<Cell>::Matrix(int Size)
 }
 
 template <typename Cell>
-Matrix<Cell>::Matrix(int Rows, int Cols)
+Matrix<Cell>::Matrix(int Rows, int Cols, int val)
 {
 	AllocateCells(Rows, Cols);
 	for (int i=0; i<Rows; i++)
 		for (int j=0; j<Cols; j++)
-			cells[i][j] = 0;
+			cells[i][j] = val;
 }
 
 template <typename Cell>

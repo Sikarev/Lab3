@@ -43,7 +43,7 @@ void normalize(vector<double>& vec) {
 		vec[i] /= len;
 	}
 };
-void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<double> omega, double& e_l, Matrix<>& l_v) {
+void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<double> omega, double& e_l, Matrix<>& l_v, int& index) {
 	const int SIZE = A.rowsCount();
 	
 	// Матрица с собственными занчениями A на диагонали
@@ -66,8 +66,7 @@ void buildTestMatrix(Matrix<>& A, Matrix<>& H, vector<double> lambda, vector<dou
 	// Построение тестировочной матрицы
 	A = H * Lambda * H.transpose();
 
-	// Индекс минимального по модулю собств. значения и соотв. ему вектора
-	int index = 0;
+	// Поиск минимального по модулю собств. значения и соотв. ему вектора
 	e_l = lambda[index];
 	for (int i = 1; i < lambda.size(); i++) {
 		if (abs(e_l) > abs(lambda[i])) {
@@ -95,4 +94,16 @@ void writeToFile(Matrix<>& A, double e_l, double e_v, double iterations, string 
 		out << e_v << endl;
 		out << iterations;
 	}
+}
+void method(Matrix<>& A, double l_1, Matrix<>& x_1, int M) {
+	const int SIZE = A.colsCount();
+
+	Matrix<> fu(1, SIZE);
+	Matrix<> fu_2(1, SIZE);
+	Matrix<> B(SIZE);			// нижнетреугольная матрица LU-разложения
+	Matrix<> C(SIZE);			// верхнетреугольная матрица LU-разложения
+	Matrix<> E(SIZE, SIZE, 1);	// единичная матрица
+	Matrix<> e(1, SIZE, 1);		// единичный вектор
+
+	bool keepWorking = Khaletsky(A, B, C);
 }

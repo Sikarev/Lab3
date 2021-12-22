@@ -25,9 +25,15 @@ int main() {
 	double e_v = 0.1;
 	double e_l = 0.1;
 	double iterations = 40;
+	int index = 0;
 	///////////////
-	buildTestMatrix(A, H, lambda, omega, e_l, l_v);
+	buildTestMatrix(A, H, lambda, omega, e_l, l_v, index);
 	writeToFile(A, e_l, e_v, iterations, path);
+
+	double l_1 = lambda[index];
+	Matrix<> x_1 = H.column(index);
+
+	method(A, l_1, x_1, iterations);
 	
 	system("pause");
 	return 0;
