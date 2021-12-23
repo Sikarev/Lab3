@@ -31,7 +31,7 @@ bool LU(Matrix<> A, Matrix<>& B, Matrix<>& C) {
 	swap(B, C);
 	B = B.transpose();
 	C = C.transpose();
-	cout << B << C;
+	//cout << B << C;
 	// Решено успешно
 	return true;
 }
@@ -74,7 +74,7 @@ void buildTestMatrix(Matrix<>& A, Matrix<>& H, Matrix<>& lambda, int begin, int 
 
 	// Заполняем матрицу случайными значениями из диапазона end-begin
 	for (int i = 0; i < SIZE; i++) {
-		lambda(0, i) = rand() % end + begin;
+		lambda(0, i) = rand() % (end * 2 + 1) + begin;
 	}
 
 	// Случайный нормированный вектор

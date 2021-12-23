@@ -9,19 +9,19 @@ using namespace std;
 int main() {
 	srand(time(0));
 
-	const int SIZE = 4;
+	const int SIZE = 10;
 
 	string path = "data.txt";
 	string output = "output.txt";
 
 	double eps_v, eps_l, r;
 	eps_v = eps_l = pow(10, -5);
-	int index = 0, iterations = 100, k_v = -1, k_l = -1;
+	int index = 0, iterations = 1000, k_v = -1, k_l = -1;
 	
 	///////////////
 
-	int begin = 1;
-	int end = 10;
+	int begin = -3;
+	int end = 3;
 
 	// Тестовая матрица
 	Matrix<>A(SIZE), H(SIZE);
