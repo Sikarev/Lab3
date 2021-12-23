@@ -4,30 +4,34 @@
 #include <string>
 #include "Matrix.h"
 
-bool Khaletsky(Matrix<> A, Matrix<>& B, Matrix<>& C)
-{
-	int size = A.rowsCount();
-	for (int j = 0; j < size; j++) {
-		for (int i = j; i < size; i++) {
-			double sum = 0;
-			for (int k = 0; k < j - 1; k++) {
-				sum += B(i, k) * C(k, j);
-			}
-			B(i, j) = A(i, j) - sum;
-		}
+bool LU(Matrix<> A, Matrix<>& B, Matrix<>& C) {
+	const int SIZE = A.colsCount();
 
-		for (int i = j + 1; i < size; i++) {
-			double sum = 0;
-			for (int k = 0; k <= j - 1; k++) {
-				sum += B(j, k) * C(k, i);
-			}
-			if (B(j, j) == 0) {
+	C = A;
+
+	for (int i = 0; i < SIZE; i++)
+		for (int j = i; j < SIZE; j++) {
+			if (C(i, i) == 0) {
 				// Разложение невозможно
 				return false;
 			}
-			C(j, i) = (A(j, i) - sum) / B(j, j);
+			B(j, i) = C(j, i) / C(i, i);
 		}
+
+	for (int k = 1; k < SIZE; k++)
+	{
+		for (int i = k - 1; i < SIZE; i++)
+			for (int j = i; j < SIZE; j++)
+				B(j, i) = C(j, i) / C(i ,i);
+
+		for (int i = k; i < SIZE; i++)
+			for (int j = k - 1; j < SIZE; j++)
+				C(i , j) = C(i, j) - B(i, k - 1) * C(k - 1, j);
 	}
+	swap(B, C);
+	B = B.transpose();
+	C = C.transpose();
+	cout << B << C;
 	// Решено успешно
 	return true;
 }
@@ -158,7 +162,7 @@ void method(Matrix<>& A, Matrix<>& xn, int M, double eps_l, double eps_v, int& k
 
 
 	// Производим LU-разложение, в случае успеха запускаем процесс итерации (строка 165)
-	bool continueToWork = Khaletsky(A, B, C);
+	bool continueToWork = LU(A, B, C);
 	int count = 0;
 	double a1 = 1, a2;
 
@@ -195,7 +199,7 @@ void method(Matrix<>& A, Matrix<>& xn, int M, double eps_l, double eps_v, int& k
 			}
 
 			// Если угол между векторами достиг требуемой точности, запоминаем потребовавшееся количетсво итераций
-			if (abs(cosBetweenVectors(f_1, f_2)) < eps_v) {
+			if (abs(acos(cosBetweenVectors(f_1, f_2))) < eps_v) {
 				k_v = count;
 				if (k_l == -1) {
 					k_l = count;

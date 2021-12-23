@@ -15,8 +15,8 @@ int main() {
 	string output = "output.txt";
 
 	double eps_v, eps_l, r;
-	eps_v = eps_l = 1;
-	int index = 0, iterations = 40, k_v = -1, k_l = -1;
+	eps_v = eps_l = pow(10, -5);
+	int index = 0, iterations = 100, k_v = -1, k_l = -1;
 	
 	///////////////
 

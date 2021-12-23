@@ -30,4 +30,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="output.txt">
+      <Filter>Файлы заголовков</Filter>
+    </Text>
+    <Text Include="data.txt">
+      <Filter>Файлы заголовков</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
